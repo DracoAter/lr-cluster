@@ -1,0 +1,7 @@
+ProxyPass / balancer://lrcluster/ stickysession=JSESSIONID
+ProxyPassReverse / balancer://lrcluster/
+<Proxy balancer://lrcluster>
+<% @lr_nodes.each do |n| %>
+	BalancerMember http://<%= n[:ipaddress] %>:8080 route=<%=n[:node_name] %>
+<% end %>
+</Proxy>

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+invoke_start(){
+	rm pid
+	sed "s/liverebel\.host=.*/liverebel.host=<%=@lrcc_ip%>/" -i /opt/tomcat/lr-agent/conf/lr-agent.properties
+	export CATALINA_PID=/opt/tomcat/pid
+	export JAVA_OPTS="-Dredis.host=<%=@lrcc_ip%> -Dredis.port=6379"
+	cd /opt/tomcat
+	lr-agent/bin/run.sh bin/catalina.sh start
+	sleep 20
+}
+
+invoke_stop(){
+	BASEDIR=`pwd` bin/catalina.sh stop
+}
+
+case "$1" in
+start )
+	invoke_start 	;;
+stop )
+	invoke_stop ;;
+restart )
+	invoke_stop
+	invoke_start
+esac
